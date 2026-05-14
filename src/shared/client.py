@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from langchain_openrouter import ChatOpenRouter
+from openhands.sdk import LLM
 from langchain_core.rate_limiters import InMemoryRateLimiter
 from src.config.config import RANDOM_SEED
 
@@ -35,4 +36,11 @@ SELECTOR_CLIENT = ChatOpenRouter(
     temperature=0,
     api_key=_openrouter_api_key(),
     seed=RANDOM_SEED
+)
+
+CODER_CLIENT = LLM(
+    model="openrouter/qwen/qwen3-coder-30b-a3b-instruct",
+    api_key=_openrouter_api_key(),
+    base_url="https://openrouter.ai/api/v1",
+    temperature=0,
 )
