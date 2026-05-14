@@ -6,7 +6,7 @@ from langchain_core.rate_limiters import InMemoryRateLimiter
 from src.config.config import RANDOM_SEED
 
 
-def _openrouter_api_key() -> str:
+def openrouter_api_key() -> str:
     key = os.getenv("OPENROUTER_API_KEY")
     if key:
         return key
@@ -26,13 +26,23 @@ rate_limiter = InMemoryRateLimiter(
 THINKER_CLIENT = ChatOpenRouter(
     model="deepseek/deepseek-v4-flash",
     temperature=1.2,
-    api_key=_openrouter_api_key(),
+    api_key=openrouter_api_key(),
     seed=RANDOM_SEED
 )
 
 SELECTOR_CLIENT = ChatOpenRouter(
     model="deepseek/deepseek-v4-flash",
     temperature=0,
-    api_key=_openrouter_api_key(),
+    api_key=openrouter_api_key(),
     seed=RANDOM_SEED
 )
+
+CREATE_ARENA_CLIENT = ChatOpenRouter(
+    model="qwen/qwen3-coder-30b-a3b-instruct",
+    temperature=0,
+    api_key=openrouter_api_key(),
+    seed=RANDOM_SEED, 
+    max_tokens=4096,
+)
+
+
