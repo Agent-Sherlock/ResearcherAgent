@@ -4,3 +4,5 @@ data/*
 **/__pycache__/
 .idea/*
 .env
+test_agent_repo/
+test.py
