@@ -3,6 +3,7 @@ the python config file for the agent, where we set up "hyperparameters" like whi
 """
 
 RANDOM_SEED = 42
+GIT_REPO_PATH = "data/history"
 
 MIN_NEW_IDEA_COUNT = 3
 MAX_NEW_IDEA_COUNT = 6
