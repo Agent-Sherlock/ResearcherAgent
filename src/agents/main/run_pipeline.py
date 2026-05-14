@@ -7,7 +7,6 @@ def run_pipeline(problem_statement: str, initial_code: str = "") -> dict:
     initial_state = {
         "problem_statement": problem_statement,
         "current_code": initial_code,
-        "current_code": "",
         "current_best_score": 0.0,
         "history": [],
         "candidate_ideas": []

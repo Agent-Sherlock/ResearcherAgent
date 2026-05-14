@@ -32,6 +32,9 @@ def brainstormer(state: ThinkerState):
     <Current Code>
     {state.current_code}
     </Current Code>
+    <improvement_scope>
+    {state.improvement_scope}
+    </improvement_scope>
     """)
 
     structured_llm = llm.with_structured_output(BrainstormerOutput)
