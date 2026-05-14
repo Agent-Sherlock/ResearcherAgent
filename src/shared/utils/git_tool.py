@@ -55,7 +55,7 @@ def git_create_repo(repo_path: str) -> dict:
     if not os.path.exists(repo_path):
         os.makedirs(repo_path)
         
-    init_res = _run_git_command(["git", "init"], cwd=repo_path)
+    init_res = _run_git_command(["git", "init", "-b", "main"], cwd=repo_path)
     if not init_res["success"]:
         return init_res
     
@@ -66,21 +66,8 @@ def git_create_repo(repo_path: str) -> dict:
         
     return {"success": True, "message": f"Successfully initialized repository at {repo_path}"}
 
-def git_create_branch(repo_path: str, branch_name: str) -> dict:
-    # Check if the branch already exists
-    check_res = _run_git_command(["git", "branch", "--list", branch_name], cwd=repo_path)
-    if check_res["success"] and check_res["output"].strip():
-        return {"success": True, "message": f"Branch '{branch_name}' already exists"}
 
-    # Create a new branch from the current HEAD
-    res = _run_git_command(["git", "branch", branch_name], cwd=repo_path)
-    if not res["success"]:
-        return res
-        
-    return {"success": True, "message": f"Successfully created branch '{branch_name}'"}
-
-def git_commit_to_branch(repo_path: str, branch_name: str, commit_message: str, files_to_add: str = ".") -> dict:
-    # Switch to the target branch
+def git_commit_to_branch(repo_path: str, commit_message: str, files_to_add: str = ".", branch_name: str = "main") -> dict:
     checkout_res = _run_git_command(["git", "checkout", branch_name], cwd=repo_path)
     if not checkout_res["success"]:
         return checkout_res
@@ -102,7 +89,7 @@ def git_commit_to_branch(repo_path: str, branch_name: str, commit_message: str, 
          
     return {"success": True, "message": f"Successfully committed to '{branch_name}'"}
 
-def git_get_history(repo_path: str, branch_name: str, max_commits: int = 50) -> dict:
+def git_get_history(repo_path: str, branch_name: str = "main", max_commits: int = 50) -> dict:
     # Retrieve only the commit hashes for a specific branch as a list
     command = [
         "git", 
