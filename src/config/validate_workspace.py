@@ -2,7 +2,7 @@
 ensures the .env file exists, and if so that the api key(s) in it are valid. 
 """
 from src.config.init_env import ensure_env_vars
-from src.shared.client import THINKER_CLIENT, COMPARATOR_CLIENT
+from src.shared.client import THINKER_CLIENT, SELECTOR_CLIENT
 from src.shared.utils.logger import logger as log
 
 import requests
@@ -10,7 +10,7 @@ import requests
 def validate_clients():
     try:
         THINKER_CLIENT.invoke("answer this response in only one word: are you working?")
-        COMPARATOR_CLIENT.invoke("answer this response in only one word: are you working?")
+        SELECTOR_CLIENT.invoke("answer this response in only one word: are you working?")
 
         log.info("OPENROUTER clients are responsive.")
     except requests.exceptions.HTTPError as e:
