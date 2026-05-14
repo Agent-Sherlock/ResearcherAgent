@@ -30,7 +30,7 @@ THINKER_CLIENT = ChatOpenRouter(
     seed=RANDOM_SEED
 )
 
-COMPARATOR_CLIENT = ChatOpenRouter(
+SELECTOR_CLIENT = ChatOpenRouter(
     model="deepseek/deepseek-v4-flash",
     temperature=0,
     api_key=_openrouter_api_key(),
