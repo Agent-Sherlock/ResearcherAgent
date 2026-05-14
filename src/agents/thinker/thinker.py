@@ -10,6 +10,7 @@ def think(state: GlobalState) -> dict:
         "problem_statement": state.problem_statement,
         "current_code": state.current_code,
         "history": state.history,
+        "improvement_scope": state.improvement_scope,
         "candidate_ideas": [] # reset ideas for now (as they may not be relavent after the first iteration)
     }
 

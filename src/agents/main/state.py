@@ -14,3 +14,6 @@ class GlobalState(BaseModel):
 
     # Thinker ideas, the first being the best one
     candidate_ideas: List[IdeaNode] = []
+
+    # the output of the arena, describing the scope for improvement (so that the evaluation wont fail)
+    improvement_scope: str = ""

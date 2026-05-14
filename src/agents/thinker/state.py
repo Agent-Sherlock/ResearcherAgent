@@ -19,3 +19,5 @@ class ThinkerState(BaseModel):
     history: List[str] = [] 
 
     candidate_ideas: List[IdeaNode] = []
+
+    improvement_scope: str = ""

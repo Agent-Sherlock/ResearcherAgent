@@ -1,19 +1,8 @@
-"""
-arena_creator.py
-
-Uses LangChain + OpenRouter + structured output to generate `solution.py`
-and `verifier.py` from a research goal. No agent loop, just one LLM call.
-
-Expects:
-- prompts.py in the same package (exports `build_prompt`)
-- src.shared.client.openrouter_api_key()
-- src.config.config.BASE_DIRECTORY, GIT_REPO_PATH
-"""
-
 import asyncio
 from pathlib import Path
 from typing import Optional
-
+import subprocess
+from src.config.config import BASE_DIRECTORY, GIT_REPO_PATH
 from pydantic import BaseModel, Field
 
 from .prompts import build_prompt
@@ -21,8 +10,7 @@ from src.shared.client import openrouter_api_key
 from src.config.config import BASE_DIRECTORY, GIT_REPO_PATH
 from src.shared.client import CREATE_ARENA_CLIENT
 from src.shared.utils.general_utils import clean_docstring
-
-# ---- Pydantic model for structured output ----
+from src.agents.main.state import GlobalState
 class ArenaFiles(BaseModel):
     solution_py: str = Field(description="Complete code for solution.py")
     verifier_py: str = Field(description="Complete code for verifier.py")
@@ -33,7 +21,7 @@ class ArenaFiles(BaseModel):
     )
 
 
-async def create_arena(
+def _create_arena(
     user_goal: str,
     title: str
 ) -> dict[str, Path]:
@@ -52,9 +40,7 @@ async def create_arena(
     prompt_text = build_prompt(user_goal)
 
     # Call – run blocking I/O in a thread to keep the async event loop free
-    result: ArenaFiles = await asyncio.to_thread(
-        structured_model.invoke, prompt_text
-    )
+    result: ArenaFiles = structured_model.invoke(prompt_text)
 
     print("-" * 20)
     print("generated improvement_scope: ")
@@ -72,4 +58,40 @@ async def create_arena(
         written[name] = path
         print(f"✅ {path}")
 
-    return written
+    return result
+
+def create_arena(
+    state: GlobalState
+) -> dict:
+    import uuid
+
+    arena_result = _create_arena(
+        user_goal=state.problem_statement,
+        title=str(uuid.uuid4().hex[:8]) # TODO add the actual state title
+    )
+
+    # run the code to make sure it works and get the initial score
+    workspace = (BASE_DIRECTORY / GIT_REPO_PATH / "MNIST").resolve()
+    python_exe = r"C:\Users\lotan\AppData\Local\Programs\Python\Python312\python.exe"
+
+    result = subprocess.run(
+        [python_exe, "verifier.py"],
+        cwd=str(workspace),
+        capture_output=True,
+        text=True
+    )
+
+    try:
+        stdout = result.stdout.strip()
+        stdout_float = float(stdout)
+        print("STDOUT:", stdout_float)
+    except Exception as e:
+        print("Error reading STDOUT:", e)
+        print("STDERR:", result.stderr.strip())
+        exit()
+
+    return {
+        "current_code": arena_result.solution_py,
+        "current_best_score": stdout_float,
+        "improvement_scope": arena_result.improvement_scope
+    }
