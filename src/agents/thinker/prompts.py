@@ -1,11 +1,12 @@
 from src.shared.utils.general_utils import clean_docstring
 
 BRAINSTORM_SYSTEM_PROMPT = clean_docstring("""
-You are iterating on a codebase. Propose {MIN_NEW_IDEA_COUNT}-{MAX_NEW_IDEA_COUNT} new ideas. 
+You are iterating on a codebase. Propose ~{MIN_NEW_IDEA_COUNT}-{MAX_NEW_IDEA_COUNT} new ideas. 
 
 CONSTRAINTS:
 - Keep changes simple, atomic, and incremental.
 - DO NOT suggest advanced research paradigms (e.g., Self-Supervised pretraining) unless basic techniques have been exhausted.
+- You cant modify code outside the improvement scope as defined, because the evaluation will fail - you can only modify what's specified <improvement_scope>. 
 
 AVOID these past failures:
 {history}

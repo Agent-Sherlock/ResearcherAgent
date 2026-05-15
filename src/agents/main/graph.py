@@ -7,6 +7,12 @@ from src.agents.checker.checker import checker_execute
 
 from langgraph.graph import StateGraph, START, END
 
+def route_after_checker(state: GlobalState) -> str:
+    if state.iteration_count >= 3:
+        return "end"
+    else:
+        return "thinker"
+
 def get_main_graph():
     builder = StateGraph(GlobalState)
     builder.add_node("create_arena", create_arena)
@@ -20,6 +26,13 @@ def get_main_graph():
     builder.add_edge("create_arena", "thinker")
     builder.add_edge("thinker", "coder_agent")
     builder.add_edge("coder_agent", "checker")
-    builder.add_edge("checker", END)
+    builder.add_conditional_edges(
+        "checker", 
+        route_after_checker, 
+        {
+            "thinker": "thinker",
+            "end": END
+        }
+    )
 
     return builder.compile()

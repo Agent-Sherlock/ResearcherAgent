@@ -18,3 +18,6 @@ class GlobalState(BaseModel):
 
     # the output of the arena, describing the scope for improvement (so that the evaluation wont fail)
     improvement_scope: str = ""
+
+    # to keep count of iterations
+    iteration_count: int = 0
