@@ -8,6 +8,7 @@ from src.shared.utils.logger import logger as log
 import requests
 
 def validate_clients():
+    from src.shared.client import THINKER_CLIENT, SELECTOR_CLIENT
     try:
         from src.shared.client import THINKER_CLIENT, SELECTOR_CLIENT
 

@@ -5,7 +5,8 @@ from src.agents.thinker.state import IdeaNode
 
 
 class GlobalState(BaseModel):
-    problem_statement: str
+    problem_statement: str = ""
+    git_repo_name: str = ""
     current_code: str = ""
     current_best_score: float = 0.0
     

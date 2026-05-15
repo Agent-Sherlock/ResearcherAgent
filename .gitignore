@@ -1,6 +1,7 @@
 main.py
 TODO.md
 data/*
+data/history/*
 **/__pycache__/
 .idea/*
 .env

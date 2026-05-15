@@ -11,6 +11,8 @@ from src.config.config import BASE_DIRECTORY, GIT_REPO_PATH
 from src.shared.client import CREATE_ARENA_CLIENT
 from src.shared.utils.general_utils import clean_docstring
 from src.agents.main.state import GlobalState
+from src.shared.utils.git_tool import write_to_file
+
 class ArenaFiles(BaseModel):
     solution_py: str = Field(description="Complete code for solution.py")
     verifier_py: str = Field(description="Complete code for verifier.py")
@@ -30,8 +32,7 @@ def _create_arena(
     Returns dict mapping filename (solution.py, verifier.py) to the written Path.
     """
     # Workspace directory
-    workspace = Path(BASE_DIRECTORY) / GIT_REPO_PATH / title
-    workspace.mkdir(parents=True, exist_ok=True)
+    workspace = (Path(BASE_DIRECTORY) / GIT_REPO_PATH / title).resolve()
 
     # Attach structured output to the model
     structured_model = CREATE_ARENA_CLIENT.with_structured_output(ArenaFiles)
@@ -54,7 +55,7 @@ def _create_arena(
         ("verifier.py", result.verifier_py),
     ]:
         path = workspace / name
-        path.write_text(code, encoding="utf-8")
+        write_to_file(path, code)
         written[name] = path
         print(f"✅ {path}")
 
@@ -63,15 +64,15 @@ def _create_arena(
 def create_arena(
     state: GlobalState
 ) -> dict:
-    import uuid
+    title = state.git_repo_name
 
     arena_result = _create_arena(
         user_goal=state.problem_statement,
-        title=str(uuid.uuid4().hex[:8]) # TODO add the actual state title
+        title=title
     )
 
     # run the code to make sure it works and get the initial score
-    workspace = (BASE_DIRECTORY / GIT_REPO_PATH / "MNIST").resolve()
+    workspace = (BASE_DIRECTORY / GIT_REPO_PATH / title).resolve()
     python_exe = r"C:\Users\lotan\AppData\Local\Programs\Python\Python312\python.exe"
 
     result = subprocess.run(

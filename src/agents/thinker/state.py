@@ -1,5 +1,6 @@
 from typing import List
 from pydantic import BaseModel, Field
+import uuid
 
 class IdeaNode(BaseModel):
     idea_id: str = Field(default_factory=lambda: uuid.uuid4().hex)
