@@ -3,33 +3,31 @@ import os
 from openhands.sdk import LLM, Agent, Conversation, ConversationExecutionStatus, Tool
 from openhands.tools.file_editor import FileEditorTool
 from openhands.tools.task_tracker import TaskTrackerTool
+
 from src.shared.client import CODER_CLIENT as llm
 from src.agents.main.state import GlobalState
-from src.config.config import BASE_DIRECTORY
+from src.config.config import BASE_DIRECTORY, GIT_REPO_PATH
 from src.shared.utils.logger import logger as log
+from src.agents.coder.prompts import task_instruction
+from src.shared.utils.logger import logger
 
-
-async def coder_agent(state: GlobalState):
+def coder_agent(state: GlobalState) -> dict:
     current_code = state.current_code
     problem_statement = state.problem_statement
     candidate_idea_node = state.candidate_ideas[0]
     candidate_idea = candidate_idea_node.details
-    # TODO - get the exact file path from GlobalState
-    target_file_path = os.path.join(BASE_DIRECTORY, "data", "history", "1", "main.py")    
-    task_instruction = f"""
-    You are an expert developer. Your task is to implement a solution based on the provided idea.
-    Problem Statement:
-    {problem_statement}
-    Candidate Idea to Implement:
-    {candidate_idea}
-    Current Code Context:
-    {current_code}
-    Instructions:
-    1. Write the code to implement the candidate idea.
-    2. You MUST edit the existing file at {target_file_path} using the str_replace command. Do not create a new file:
-       {target_file_path}
-    """
-    log.info(f"Coder Agent received task instruction:\n{task_instruction}")
+
+    target_file_path = os.path.join(BASE_DIRECTORY, GIT_REPO_PATH, state.git_repo_name, "solution.py")
+
+    instruction = task_instruction.format(
+        problem_statement=problem_statement,
+        candidate_idea=candidate_idea,
+        current_code=current_code,
+        target_file_path=target_file_path, 
+        improvement_scope=state.improvement_scope
+    )
+
+    logger.info(f"Coder Agent received task instruction:\n{instruction}")
     tools = [
         Tool(name=FileEditorTool.name),
         Tool(name=TaskTrackerTool.name)
@@ -39,8 +37,14 @@ async def coder_agent(state: GlobalState):
     
     conversation = Conversation(agent=agent, workspace=BASE_DIRECTORY)
     
-    conversation.send_message(task_instruction)
+    conversation.send_message(instruction)
     conversation.run()
+
+    logger.info(f"Conversation with coder finished with status: {conversation.state.execution_status}")
+    logger.info(f"New code: just look at it :)")
+
+    exit() # TODO finish from here
+
     if conversation.state.execution_status == ConversationExecutionStatus.FINISHED:
         return True
     return False
