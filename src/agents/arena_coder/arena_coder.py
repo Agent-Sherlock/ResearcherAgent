@@ -1,5 +1,6 @@
 import asyncio
 from pathlib import Path
+import sys
 from typing import Optional
 import subprocess
 from src.config.config import BASE_DIRECTORY, GIT_REPO_PATH
@@ -73,7 +74,7 @@ def create_arena(
 
     # run the code to make sure it works and get the initial score
     workspace = (BASE_DIRECTORY / GIT_REPO_PATH / title).resolve()
-    python_exe = r"C:\Users\lotan\AppData\Local\Programs\Python\Python312\python.exe"
+    python_exe = "python"
 
     result = subprocess.run(
         [python_exe, "verifier.py"],
