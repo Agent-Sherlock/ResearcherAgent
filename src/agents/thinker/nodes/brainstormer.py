@@ -23,7 +23,7 @@ def brainstormer(state: ThinkerState):
     """
     Proposes new ideas based on the problem statement, current code, and past failures (history).
     """
-    history = "\n".join([f"- {h}" for h in state.history])
+    history = "\n".join([f"- {h} \n" for h in state.history])
     
     user_prompt = clean_docstring(f"""
     <goal>

@@ -50,7 +50,7 @@ CODER_CLIENT = LLM(
     model="openrouter/qwen/qwen3-coder-30b-a3b-instruct",
     api_key=openrouter_api_key(),
     base_url="https://openrouter.ai/api/v1",
-    temperature=0,
+    temperature=0
 )
 
 CHEAP_CLIENT = ChatOpenRouter(

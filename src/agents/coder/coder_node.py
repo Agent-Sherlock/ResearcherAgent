@@ -41,10 +41,9 @@ def coder_agent(state: GlobalState) -> dict:
     conversation.run()
 
     logger.info(f"Conversation with coder finished with status: {conversation.state.execution_status}")
-    logger.info(f"New code: just look at it :)")
-
-    exit() # TODO finish from here
 
     if conversation.state.execution_status == ConversationExecutionStatus.FINISHED:
-        return True
-    return False
+        return {}
+    else:
+        logger.error("Coder agent failed to complete the task.")
+        exit()

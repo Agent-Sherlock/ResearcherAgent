@@ -35,7 +35,7 @@ FILE 2: `verifier.py`
         * The verifier OWNs the training loop entirely. It must:
           - Call `solution.create_model()` to get the model.
           - Set up the dataset (e.g., MNIST via `torchvision`), data loaders, loss function (e.g., `CrossEntropyLoss`), and call the optimizer (e.g., `Adam`) from the solution. Do judgment to make the training non-trivial but not excessively long. 
-          - Train the model for a **fixed time budget** (e.g., `TRAINING_TIME_SECONDS = 22`). Use `time.time()` to stop training exactly after that many seconds, irrespective of epoch count.
+          - Train the model for a **fixed time budget** (e.g., `TRAINING_TIME_SECONDS = 35`). Use `time.time()` to stop training exactly after that many seconds, irrespective of epoch count.
           - After training, evaluate the model on the test set and compute **accuracy** as a float (0-100).
           - Return that accuracy.
         * The time budget MUST be a clearly named constant at the top of the file (e.g., `TRAINING_TIME_BUDGET = 120`).
